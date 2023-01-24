@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "428771824470",
+    "project_id": "mally-book",
+    "storage_bucket": "mally-book.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:428771824470:android:c430aebad44d03334cbcf7",
+        "android_client_info": {
+          "package_name": "com.bimanlakhey.mallybook"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "428771824470-reb302ld012oo4h5dr47jdtt5q3fk1g9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBd_gZBuFsoUCi0BWfSo9qWF0tDki60d_Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "428771824470-reb302ld012oo4h5dr47jdtt5q3fk1g9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
