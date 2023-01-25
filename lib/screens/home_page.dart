@@ -11,6 +11,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final CollectionReference _book = FirebaseFirestore.instance.collection("book");
+  TextEditingController renameBookController = TextEditingController();
+  FocusNode renameBookNode = FocusNode();
+  final _renameBookFormKey = GlobalKey<FormState>();
+  TextEditingController addBookController = TextEditingController();
+  FocusNode addBookNode = FocusNode();
+  final _addBookFormKey = GlobalKey<FormState>();
+
 
   var popUpMenuItems = {
     "Rename",
@@ -31,12 +38,26 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Your Books",
-              style: TextStyle(
-                  fontSize: screenWidth / 20,
-                  color: Colors.black54
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Your Books",
+                  style: TextStyle(
+                      fontSize: screenWidth / 23,
+                      color: Colors.black54
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {
+
+                  },
+                  icon: Icon(
+                    Icons.search,
+                    color: Theme.of(context).primaryColor,
+                  )
+                )
+              ],
             ),
             SizedBox(height: screenHeight * 0.03,),
             StreamBuilder(
@@ -53,7 +74,13 @@ class _HomePageState extends State<HomePage> {
                           contentPadding: index == streamSnapshot.data!.docs.length - 1
                               ? EdgeInsets.zero
                               : const EdgeInsets.only(bottom: 20),
-                          title: Text(documentSnapshot["name"]),
+                          title: Text(
+                            documentSnapshot["name"],
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: screenWidth / 21
+                            ),
+                          ),
                           leading: Container(
                               decoration: BoxDecoration(
                                   color: Colors.cyan.shade50,
@@ -62,7 +89,7 @@ class _HomePageState extends State<HomePage> {
                               padding: const EdgeInsets.all(10),
                               child: Icon(Icons.book, color: Theme.of(context).primaryColor,)
                           ),
-                          trailing: showPopUp()
+                          trailing: showPopUp(documentSnapshot: documentSnapshot)
 
                         );
 
@@ -80,7 +107,7 @@ class _HomePageState extends State<HomePage> {
 
       floatingActionButton: GestureDetector(
         onTap: () {
-          customAddBookBottomSheet();
+          addBookBottomSheet();
         },
         child: Container(
           decoration: BoxDecoration(
@@ -112,23 +139,27 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  showPopUp() {
+  showPopUp({required DocumentSnapshot documentSnapshot}) {
     return PopupMenuButton(
-      onSelected: (item) {
-        //TODO: add menu item on select functionality
-      },
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12)
+      ),
       icon: const Icon(Icons.more_vert_outlined),
       itemBuilder: (context) {
         return <PopupMenuItem>[
           customPopupMenuItem(
             icon: const Icon(CupertinoIcons.pen),
             title: "Rename",
-            onTap: () {}
+            onTap: ()  {
+              bookBottomSheet(documentSnapshot: documentSnapshot);
+            }
           ),
           customPopupMenuItem(
             icon: const Icon(Icons.delete),
             title: "Delete Book",
-            onTap: () {}
+            onTap: () {
+              confirmDeleteDialog(productId: documentSnapshot.id);
+            }
           ),
         ];
       }
@@ -144,24 +175,291 @@ class _HomePageState extends State<HomePage> {
       child: ListTile(
         leading: icon,
         title: Text(title),
-        onTap: onTap(),
+        onTap: onTap,
       )
     );
   }
 
-  customAddBookBottomSheet() {
+  addBookBottomSheet() {
     return showModalBottomSheet(
       context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(25.0)
+        )
+      ),
       builder: (context) {
         return BottomSheet(
           onClosing: () {},
           builder: (context) {
-            return Container(
-              height: 150,
+              return SizedBox(
+                // height: 200,
+                child: Form(
+                  key: _addBookFormKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        children: [
+                          IconButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              icon: const Icon(Icons.close)
+                          ),
+                          const Text(
+                            "Add New Book",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 18
+                            ),
+                          )
+                        ],
+                      ),
+                      const Divider(thickness: 2,),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15),
+                        child: TextFormField(
+                          controller: addBookController,
+                          focusNode: addBookNode,
+                          autofocus: true,
+                          validator: (value) {
+                            if(value == null || value.isEmpty) {
+                              return "The book name cannot be empty";
+                            }
+                            return null;
+                          },
+                          decoration: InputDecoration(
+                              label: const Text("Book Name"),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(
+                                    color: Theme.of(context).primaryColor,
+                                    width: 2
+                                ),
+
+                              ),
+                              labelStyle: TextStyle(
+                                  color: Theme.of(context).primaryColor
+                              ),
+                              hintText: "Enter book name",
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12)
+                              )
+                          ),
+                        ),
+                      ),
+                      const Divider(thickness: 2,),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20),
+                        child: GestureDetector(
+                          onTap: () {
+                            addBookNode.unfocus();
+                            if(_addBookFormKey.currentState!.validate()) {
+                              _createBook();
+                              Navigator.of(context).pop();
+                            }
+
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Theme.of(context).primaryColor,
+                                borderRadius: BorderRadius.circular(12)
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 15,
+                            ),
+                            child: Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  Icon(
+                                    Icons.add,
+                                    color: Colors.white,
+                                  ),
+                                  SizedBox(width: 10,),
+                                  Text(
+                                    "ADD NEW BOOK",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom)),
+                    ],
+                  ),
+                ),
+              );
+            }
+        );
+      },
+    );
+  }
+  bookBottomSheet({required DocumentSnapshot documentSnapshot}) {
+    return showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return BottomSheet(
+          onClosing: () {
+
+          },
+          builder: (context) {
+            return SizedBox(
+              // height: 200,
+              child: Form(
+                key: _renameBookFormKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      children: [
+                        IconButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: const Icon(Icons.close)
+                        ),
+                        const Text(
+                          "Rename cashbook",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 18
+                          ),
+                        )
+                      ],
+                    ),
+                    const Divider(thickness: 2,),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15),
+                      child: TextFormField(
+                        controller: renameBookController,
+                        focusNode: renameBookNode,
+                        autofocus: true,
+                        validator: (value) {
+                          if(value == null || value.isEmpty) {
+                            return "The book name cannot be empty";
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                          label: const Text("Book Name"),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: Theme.of(context).primaryColor,
+                              width: 2
+                            ),
+
+                          ),
+                          labelStyle: TextStyle(
+                            color: Theme.of(context).primaryColor
+                          ),
+                          hintText: "Enter book name",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12)
+                          )
+                        ),
+                      ),
+                    ),
+                    const Divider(thickness: 2,),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20),
+                      child: GestureDetector(
+                        onTap: () {
+                          renameBookNode.unfocus();
+                          if(_renameBookFormKey.currentState!.validate()) {
+                            _renameBook(documentSnapshot);
+                            Navigator.of(context).pop();
+                          }
+
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).primaryColor,
+                            borderRadius: BorderRadius.circular(12)
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 15,
+                            horizontal: 150
+                          ),
+                          child: const Center(
+                            child: Text(
+                              "SAVE",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom)),
+                  ],
+                ),
+              ),
             );
           }
         );
       },
     );
   }
+  confirmDeleteDialog({required String productId}) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12)
+          ),
+          title: const Text("Delete Book?"),
+          content: const Text("Are you sure, you want to delete the book?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text("No, don't")
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)
+                )
+              ),
+              onPressed: () {
+                _deleteBook(productId: productId);
+                Navigator.pop(context);
+              },
+              child: const Text("Yes, delete")
+            )
+          ],
+        );
+      }
+    );
+  }
+
+  Future<void> _renameBook([DocumentSnapshot? documentSnapshot]) async {
+    if (documentSnapshot != null && renameBookController.text.isNotEmpty) {
+      await _book
+          .doc(documentSnapshot!.id)
+          .update({"name": renameBookController.text});
+      renameBookController.text = "";
+    }
+  }
+  Future<void> _createBook() async {
+    if(addBookController.text.isNotEmpty) {
+      await _book.add({"name": addBookController.text});
+      addBookController.text = "";
+    }
+  }
+  Future<void> _deleteBook({required String productId}) async {
+    await _book.doc(productId).delete();
+  }
+
 }
