@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:mally_book/screens/home_page.dart';
+import 'package:mally_book/screens/home/home_page.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,11 +15,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "Flutter Demo",
+      debugShowCheckedModeBanner: false,
+      title: "MallyBook",
       theme: ThemeData(
         brightness: Brightness.light,
-        primaryColor: Colors.cyan,
-        accentColor: Colors.cyanAccent
+        primaryColor: Color(0xffa62a6c),
+        // accentColor: Colors.pinkAccent
       ),
       home: HomePage(),
     );

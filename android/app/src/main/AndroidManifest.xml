@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.bimanlakhey.mallybook">
    <application
-        android:label="mally_book"
+        android:label="MallyBook"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
