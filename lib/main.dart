@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:mally_book/screens/home/home_page.dart';
+import 'screens/splash/splash_page.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,9 +20,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         brightness: Brightness.light,
         primaryColor: Color(0xffa62a6c),
+        backgroundColor: Color(0xffffe0ec)
         // accentColor: Colors.pinkAccent
       ),
-      home: HomePage(),
+      home: const SplashPage(),
     );
   }
 }
