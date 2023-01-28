@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mally_book/screens/auth/login/login_page.dart';
-import 'package:mally_book/screens/home/home_page.dart';
+
+import '../../books/books_list/books_list_page.dart';
 
 class VerifyEmailPage extends StatefulWidget {
   const VerifyEmailPage({Key? key}) : super(key: key);

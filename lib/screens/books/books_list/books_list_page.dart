@@ -2,9 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mally_book/screens/home/widgets/add_book_bottom_sheet.dart';
-import 'package:mally_book/screens/home/widgets/show_popup_widget.dart';
+import 'package:mally_book/screens/books/widgets/show_popup_widget.dart';
 import 'package:mally_book/screens/search_book/search_book_screen.dart';
+
+import '../book_details/book_details_page.dart';
+import '../widgets/add_book_bottom_sheet.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -14,6 +16,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final currentUser = FirebaseAuth.instance;
   final CollectionReference _book = FirebaseFirestore.instance.collection("book");
   TextEditingController renameBookController = TextEditingController();
   FocusNode renameBookNode = FocusNode();
@@ -76,7 +79,7 @@ class _HomePageState extends State<HomePage> {
             ),
             SizedBox(height: screenHeight * 0.03,),
             StreamBuilder(
-              stream: _book.snapshots(),
+              stream: _book.where("uId", isEqualTo: currentUser.currentUser!.uid).snapshots(),
               builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
                 if(streamSnapshot.hasData) {
                   return ListView.builder(
@@ -86,6 +89,13 @@ class _HomePageState extends State<HomePage> {
                         final DocumentSnapshot documentSnapshot
                         = streamSnapshot.data!.docs[index];
                         return ListTile(
+                          onTap: () {
+                            Navigator
+                              .of(context)
+                              .push(MaterialPageRoute(
+                                builder: (_) => BookDetailsPage(book: documentSnapshot,))
+                              );
+                          },
                           contentPadding: index == streamSnapshot.data!.docs.length - 1
                               ? EdgeInsets.zero
                               : const EdgeInsets.only(bottom: 20),

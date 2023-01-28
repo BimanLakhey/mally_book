@@ -19,8 +19,21 @@ class MyApp extends StatelessWidget {
       title: "MallyBook",
       theme: ThemeData(
         brightness: Brightness.light,
-        primaryColor: Color(0xffa62a6c),
-        backgroundColor: Color(0xffffe0ec)
+        primaryColor: const Color(0xffa62a6c),
+        backgroundColor: Colors.white,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xffa62a6c),
+          centerTitle: true
+        ),
+        timePickerTheme: TimePickerTheme.of(context).copyWith(
+          hourMinuteTextColor: const Color(0xffa62a6c),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          dayPeriodTextColor: const Color(0xffa62a6c),
+          dialHandColor: const Color(0xffa62a6c),
+          dialBackgroundColor: const Color(0xffffe0ec)
+        ),
         // accentColor: Colors.pinkAccent
       ),
       home: const SplashPage(),

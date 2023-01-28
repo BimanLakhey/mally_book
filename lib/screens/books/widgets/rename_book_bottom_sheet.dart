@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:mally_book/screens/home/utils/rename_book.dart';
+
+import '../utils/rename_book.dart';
 
 bookBottomSheet({
   required DocumentSnapshot documentSnapshot,

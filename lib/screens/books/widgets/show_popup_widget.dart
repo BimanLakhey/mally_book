@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mally_book/screens/home/widgets/confirm_delete_dialog.dart';
-import 'package:mally_book/screens/home/widgets/custom_popup_menu_item_widget.dart';
-import 'package:mally_book/screens/home/widgets/rename_book_bottom_sheet.dart';
+import 'package:mally_book/screens/books/widgets/rename_book_bottom_sheet.dart';
+
+import 'confirm_delete_dialog.dart';
+import 'custom_popup_menu_item_widget.dart';
 
 showPopUp({
   required DocumentSnapshot documentSnapshot,
