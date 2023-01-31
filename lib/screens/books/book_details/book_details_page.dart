@@ -23,7 +23,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
     await _documentReference.get().then(
           (DocumentSnapshot doc) {
         final data = doc.data() as Map<String, dynamic>;
-        currentBalance = double.parse(data["balance"].toString()) ?? 0.0;
+        currentBalance = double.parse("${data["balance"] ?? 0.0}");
       },
       onError: (e) => print("Error getting document: $e"),
     );
