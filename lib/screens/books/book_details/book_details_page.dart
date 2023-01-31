@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:mally_book/screens/books/book_details/cash_entry_details_page.dart';
 import 'package:mally_book/screens/books/book_details/cash_in_entry_page.dart';
 import 'package:mally_book/screens/books/book_details/widgets/floating_action_widget.dart';
 
 class BookDetailsPage extends StatefulWidget {
+  CollectionReference bookCollection;
   DocumentSnapshot book;
-  BookDetailsPage({Key? key, required this.book}) : super(key: key);
+  BookDetailsPage({Key? key, required this.book, required this.bookCollection}) : super(key: key);
   @override
   State<BookDetailsPage> createState() => _BookDetailsPageState();
 }
@@ -14,15 +16,33 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
   late DocumentReference _documentReference;
   late CollectionReference _referenceCashEntry;
   late Stream<QuerySnapshot> _cashEntriesStream;
+  int totalIn = 0;
+  int totalOut = 0;
+  double? currentBalance;
+  loadBalance() async {
+    await _documentReference.get().then(
+          (DocumentSnapshot doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        currentBalance = double.parse(data["balance"].toString()) ?? 0.0;
+      },
+      onError: (e) => print("Error getting document: $e"),
+    );
+    setState(() {
+
+    });
+  }
+
   @override
+
   void initState() {
     // TODO: implement initState
     super.initState();
     _documentReference = FirebaseFirestore.instance.collection("book").doc(widget.book.id);
+    loadBalance();
     _referenceCashEntry = _documentReference.collection("cashEntries");
     _cashEntriesStream = _referenceCashEntry.snapshots();
-
   }
+
   @override
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
@@ -73,10 +93,11 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
   cashInOnTap() {
     Navigator
       .of(context)
-        .push(
+        .pushReplacement(
           MaterialPageRoute(builder: (_) => AddCashPage(
             title: "Add Cash In Entry",
             doc: widget.book,
+            bookCollection: widget.bookCollection,
             entryType: "Add"
           ))
         );
@@ -84,10 +105,11 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
   cashOutOnTap() {
     Navigator
         .of(context)
-        .push(
+        .pushReplacement(
         MaterialPageRoute(builder: (_) => AddCashPage(
           title: "Add Cash Out Entry",
           doc: widget.book,
+          bookCollection: widget.bookCollection,
           entryType: "Remove"
 
         ))
@@ -104,6 +126,14 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
         else if(snapshot.hasData) {
           QuerySnapshot data = snapshot.data;
           List<QueryDocumentSnapshot> documents = data.docs;
+          documents.forEach((element) {
+            if(element["entryType"] == "Add") {
+              totalIn++;
+            }
+            else if(element["entryType"] == "Remove") {
+              totalOut++;
+            }
+          });
           List<Map> cashEntries = documents.map((e) => {
             "id": e.id,
             "amount": e["amount"],
@@ -139,7 +169,12 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                   itemBuilder: (context, index) {
                     Map currentEntry = cashEntries[index];
                     return GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) =>
+                          CashEntryDetailsPage(currentEntry: documents[index], cashEntries: _referenceCashEntry,))
+                        );
+                      },
                       child: Container(
                         margin: EdgeInsets.only(bottom: 30),
                         padding: const EdgeInsets.all(20),
@@ -169,7 +204,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                                         color: Colors.pink.shade50,
                                         borderRadius: BorderRadius.circular(12)
                                       ),
-                                      child: Text(
+                                       child: Text(
                                         currentEntry["paymentType"].toString()
                                       ),
                                     ),
@@ -308,8 +343,8 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              Text(
+            children: [
+              const Text(
                 "Net Balance",
                 style: TextStyle(
                   fontSize: 18,
@@ -317,8 +352,8 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                 ),
               ),
               Text(
-                "0",
-                style: TextStyle(
+              "${currentBalance ?? 0.0}",
+                style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold
                 ),
@@ -341,7 +376,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                 ),
               ),
               Text(
-                "0",
+                totalIn.toString(),
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
@@ -363,7 +398,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                 ),
               ),
               Text(
-                "0",
+                totalOut.toString(),
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,

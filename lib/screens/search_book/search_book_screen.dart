@@ -1,16 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:mally_book/screens/books/book_details/book_details_page.dart';
 import 'package:mally_book/screens/books/widgets/show_popup_widget.dart';
 
 class SearchBookScreen extends StatefulWidget {
   TextEditingController renameBookController;
   FocusNode renameBookNode;
   GlobalKey<FormState> renameBookFormKey;
+  List<QueryDocumentSnapshot> books;
+  CollectionReference book;
   SearchBookScreen({
     Key? key,
     required this.renameBookController,
     required this.renameBookNode,
-    required this.renameBookFormKey
+    required this.renameBookFormKey,
+    required this.books,
+    required this.book
 
   }) : super(key: key);
 
@@ -20,7 +25,7 @@ class SearchBookScreen extends StatefulWidget {
 
 class _SearchBookScreenState extends State<SearchBookScreen> {
   TextEditingController searchController = TextEditingController();
-  final CollectionReference _book = FirebaseFirestore.instance.collection("book");
+  List<QueryDocumentSnapshot> searchedBooks = [];
 
 
   @override
@@ -36,14 +41,14 @@ class _SearchBookScreenState extends State<SearchBookScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 20,),
+            SizedBox(height: screenHeight * 0.025,),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Row(
                 children: [
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
-                    child: Icon(Icons.arrow_back)
+                    child: const Icon(Icons.arrow_back)
                   ),
                   const SizedBox(width: 20,),
                   Expanded(
@@ -56,65 +61,77 @@ class _SearchBookScreenState extends State<SearchBookScreen> {
                             color: Theme.of(context).primaryColor,
                             width: 2
                           )
-                        )
+                        ),
+                        suffixIcon: Icon(Icons.search, color: Theme.of(context).primaryColor,),
                       ),
+                      onSubmitted: (_) {
+                        searchedBooks.clear();
+                        searchedBooks = [];
+                        for (var element in widget.books) {
+                          if(element["name"].toString().contains(searchController.text)) {
+                            searchedBooks.add(element);
+                          }
+                        }
+                      },
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 40,),
+            SizedBox(height: screenHeight * 0.05,),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: StreamBuilder(
-                stream: _book.snapshots(),
-                builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
-                  if(streamSnapshot.hasData) {
-                    return ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: streamSnapshot.data!.docs.length,
-                        itemBuilder: (context, index) {
-                          final DocumentSnapshot documentSnapshot
-                          = streamSnapshot.data!.docs[index];
-                          return ListTile(
-                            contentPadding: index == streamSnapshot.data!.docs.length - 1
-                                ? EdgeInsets.zero
-                                : const EdgeInsets.only(bottom: 20),
-                            title: Text(
-                              documentSnapshot["name"],
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: screenWidth / 21
-                              ),
-                            ),
-                            leading: Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.cyan.shade50,
-                                    borderRadius: BorderRadius.circular(100)
-                                ),
-                                padding: const EdgeInsets.all(10),
-                                child: Icon(Icons.book, color: Theme.of(context).primaryColor,)
-                            ),
-                            trailing: showPopUp(
-                              documentSnapshot: documentSnapshot,
-                              renameBookFormKey: widget.renameBookFormKey,
-                              renameBookNode: widget.renameBookNode,
-                              renameBookController: widget.renameBookController,
-                              book: _book
-                            )
-
-                          );
-
-                        }
-                    );
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount:searchedBooks.isNotEmpty ? searchedBooks.length : widget.books.length,
+                itemBuilder: (context, index) {
+                  final DocumentSnapshot documentSnapshot;
+                  if(searchedBooks.isNotEmpty) {
+                    documentSnapshot
+                    =  searchedBooks[index];
                   }
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                },
-              ),
-            ),
+                  else {
+                    documentSnapshot
+                    =  widget.books[index];
+                  }
 
+                  return ListTile(
+                      onTap: () {
+                        Navigator
+                            .of(context)
+                            .push(MaterialPageRoute(
+                            builder: (_) => BookDetailsPage(book: documentSnapshot, bookCollection: widget.book,))
+                        );
+                      },
+                    contentPadding: index == widget.books.length - 1
+                        ? EdgeInsets.zero
+                        : const EdgeInsets.only(bottom: 20),
+                    title: Text(
+                      documentSnapshot["name"],
+                      style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: screenWidth / 21
+                      ),
+                    ),
+                    leading: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.cyan.shade50,
+                            borderRadius: BorderRadius.circular(100)
+                        ),
+                        padding: const EdgeInsets.all(10),
+                        child: Icon(Icons.book, color: Theme.of(context).primaryColor,)
+                    ),
+                    trailing: showPopUp(
+                      documentSnapshot: documentSnapshot,
+                      renameBookFormKey: widget.renameBookFormKey,
+                      renameBookNode: widget.renameBookNode,
+                      renameBookController: widget.renameBookController,
+                      book: widget.book
+                    )
+                  );
+                }
+              )
+            ),
           ],
         ),
       ),

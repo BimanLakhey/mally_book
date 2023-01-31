@@ -6,7 +6,8 @@ addBookBottomSheet({
   required GlobalKey<FormState> addBookFormKey,
   required TextEditingController addBookController,
   required FocusNode addBookNode,
-  required var book
+  required var book,
+  required var bookExamples,
 }) {
 
   return showModalBottomSheet(
@@ -26,6 +27,7 @@ addBookBottomSheet({
                 key: addBookFormKey,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
@@ -58,7 +60,7 @@ addBookBottomSheet({
                         decoration: InputDecoration(
                             label: const Text("Book Name"),
                             focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(30),
                               borderSide: BorderSide(
                                   color: Theme.of(context).primaryColor,
                                   width: 2
@@ -73,6 +75,56 @@ addBookBottomSheet({
                                 borderRadius: BorderRadius.circular(12)
                             )
                         ),
+                      ),
+                    ),
+                    const SizedBox(height: 20,),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20.0),
+                      child: Text(
+                        "Suggestions",
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.black54,
+                          fontWeight: FontWeight.w500
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15),
+                      child: GridView.builder(
+                          shrinkWrap: true,
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: 4/ 1,
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 10
+                          ),
+                          physics: const BouncingScrollPhysics(),
+                          itemCount: bookExamples.length,
+                          itemBuilder: (context, index) {
+                            return InkWell(
+                              onTap: () {
+                                addBookController.text = bookExamples[index].bookName;
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(30),
+                                    border: Border.all(color: Theme.of(context).primaryColor),
+                                    color: Colors.pink.shade50
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    bookExamples[index].bookName,
+                                    style: TextStyle(
+                                        color: Theme.of(context).primaryColor,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 13
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
                       ),
                     ),
                     const Divider(thickness: 2,),

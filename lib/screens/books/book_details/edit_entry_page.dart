@@ -2,24 +2,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:mally_book/screens/books/book_details/book_details_page.dart';
 import 'package:mally_book/screens/books/book_details/widgets/cash_add_floating_action_widget.dart';
 
 
-class AddCashPage extends StatefulWidget {
+class EditEntryPage extends StatefulWidget {
   String title;
   String entryType;
   DocumentSnapshot doc;
-  CollectionReference bookCollection;
 
-  AddCashPage({
+  EditEntryPage({
     Key? key,
     required this.title,
     required this.doc,
-    required this.entryType,
-    required this.bookCollection,
+    required this.entryType
   }) : super(key: key) {
-    _documentReference = bookCollection.doc(doc.id);
+    _documentReference = FirebaseFirestore.instance.collection("book").doc(doc.id);
     _referenceCashEntry = _documentReference.collection("cashEntries");
   }
 
@@ -27,10 +24,10 @@ class AddCashPage extends StatefulWidget {
   late CollectionReference _referenceCashEntry;
 
   @override
-  State<AddCashPage> createState() => _AddCashPageState();
+  State<EditEntryPage> createState() => _EditEntryPageState();
 }
 
-class _AddCashPageState extends State<AddCashPage> {
+class _EditEntryPageState extends State<EditEntryPage> {
 
   var selectedDate;
   var selectedTimeOfDay;
@@ -355,9 +352,8 @@ class _AddCashPageState extends State<AddCashPage> {
     );
   }
 
-  cashEntryAdd() async {
+  cashEntryAdd() {
     try{
-      final docRef = FirebaseFirestore.instance.collection("book").doc(widget.doc.id);
       Map<String, String> cashEntryToAdd={
         "amount": amountController.text.trim(),
         "remarks": remarkController.text.trim(),
@@ -369,28 +365,11 @@ class _AddCashPageState extends State<AddCashPage> {
         "entryTime": selectedTimeOfDay == null ? TimeOfDay.now().format(context) : selectedTimeOfDay.format(context).toString(),
       };
       widget._referenceCashEntry.add(cashEntryToAdd);
-      double? currentBalance;
-      await docRef.get().then(
-            (DocumentSnapshot doc) {
-          final data = doc.data() as Map<String, dynamic>;
-          currentBalance = double.parse(data["balance"].toString()) ?? 0.0;
-        },
-        onError: (e) => print("Error getting document: $e"),
-      );
-      if(widget.entryType == "Add") {
-        await docRef
-            .update({"balance": currentBalance! + double.parse(amountController.text)});
-      }
-      else {
-        await docRef
-            .update({"balance": currentBalance! - double.parse(amountController.text)});
-      }
-
-      Navigator.of(context).push(MaterialPageRoute(builder: (_) => BookDetailsPage(book: widget.doc, bookCollection: widget.bookCollection)));
+      Navigator.of(context).pop();
     }
     catch(e) {
       print(e);
     }
-  }
 
+  }
 }
