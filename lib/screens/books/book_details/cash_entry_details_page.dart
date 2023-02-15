@@ -7,7 +7,10 @@ import 'package:mally_book/screens/books/widgets/custom_popup_menu_item_widget.d
 class CashEntryDetailsPage extends StatefulWidget {
   QueryDocumentSnapshot currentEntry;
   CollectionReference cashEntries;
-  CashEntryDetailsPage({Key? key, required this.currentEntry, required this.cashEntries}) : super(key: key);
+  DocumentReference docRef;
+  String bookId;
+  CollectionReference bookCollection;
+  CashEntryDetailsPage({Key? key, required this.currentEntry, required this.cashEntries, required this.docRef, required this.bookId, required this.bookCollection}) : super(key: key);
 
   @override
   State<CashEntryDetailsPage> createState() => _CashEntryDetailsPageState();
@@ -218,7 +221,27 @@ class _CashEntryDetailsPageState extends State<CashEntryDetailsPage> {
   }
 
   Future<void> deleteEntry({required String entryId, required var cashEntries}) async {
-    await cashEntries.doc(entryId).delete();
+    try {
+      await cashEntries.doc(entryId).delete();
+      double? currentBalance;
+      await widget.docRef.get().then(
+            (DocumentSnapshot doc) {
+          final data = doc.data() as Map<String, dynamic>;
+          currentBalance = double.parse("${data["balance"] ?? 0.0}");
+        },
+        onError: (e) => print("Error getting document: $e"),
+      );
+      if(widget.currentEntry["entryType"] == "Add") {
+        await widget.docRef
+            .update({"balance": currentBalance! - double.parse(widget.currentEntry["amount"])});
+      }
+      else {
+        await widget.docRef
+          .update({"balance": currentBalance! + double.parse(widget.currentEntry["amount"])});
+      }
+    } catch(e) {
+      print(e);
+    }
   }
 
   confirmDeleteDialog({
@@ -251,9 +274,27 @@ class _CashEntryDetailsPageState extends State<CashEntryDetailsPage> {
                   ),
                   onPressed: () async {
                     await deleteEntry(entryId: entryId, cashEntries: cashEntries);
-                    Navigator.pop(this.context);
-                    Navigator.pop(this.context);
-                    Navigator.pop(this.context);
+                    final docRef = widget.bookCollection.doc(widget.bookId);
+                    DocumentSnapshot? book;
+                    await docRef.get().then(
+                          (DocumentSnapshot doc) {
+                        book = doc;
+                      },
+                      onError: (e) => print("Error getting document: $e"),
+                    );
+                    Navigator.of(this.context).pop();
+                    Navigator.of(this.context).pop();
+                    Navigator.of(this.context).pop();
+                    Navigator.of(this.context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (_) =>
+                          BookDetailsPage(
+                            book: book!,
+                            bookCollection: widget.bookCollection
+                          )
+                      )
+                    );
+
                   },
                   child: const Text("Yes, delete")
               )

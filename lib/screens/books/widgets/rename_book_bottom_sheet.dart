@@ -13,6 +13,7 @@ bookBottomSheet({
 
 }) {
   return showModalBottomSheet(
+    enableDrag: false,
     context: context,
     builder: (context) {
       return BottomSheet(

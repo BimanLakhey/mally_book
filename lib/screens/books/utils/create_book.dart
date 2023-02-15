@@ -8,7 +8,8 @@ Future<void> createBook({
   if(addBookController.text.isNotEmpty) {
     await book.add({
       "name": addBookController.text,
-      "uId": FirebaseAuth.instance.currentUser!.uid
+      "uId": FirebaseAuth.instance.currentUser!.uid,
+      "balance": 0.0
     });
     addBookController.text = "";
   }

@@ -1,11 +1,13 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mally_book/screens/books/book_details/book_details_page.dart';
 import 'package:mally_book/screens/books/book_details/widgets/cash_add_floating_action_widget.dart';
-
-
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 class AddCashPage extends StatefulWidget {
   String title;
   String entryType;
@@ -43,6 +45,11 @@ class _AddCashPageState extends State<AddCashPage> {
   TextEditingController remarkController = TextEditingController();
 
   final _addCashFormKey = GlobalKey<FormState>();
+
+  PlatformFile? pickedImage;
+  UploadTask? uploadTask;
+
+  String? entryImageUrl;
 
 
   @override
@@ -227,31 +234,48 @@ class _AddCashPageState extends State<AddCashPage> {
                   ),
                 ),
                 const SizedBox(height: 40,),
-                GestureDetector(
-                  onTap: () {},
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(width: 1,),
-                      borderRadius: BorderRadius.circular(30)
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: selectImage,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(width: 1,),
+                          borderRadius: BorderRadius.circular(30)
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 25,
+                          vertical: 8
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.camera_alt_rounded, color: Theme.of(context).primaryColor,),
+                            const SizedBox(width: 10,),
+                            Text(
+                              "Attach Image",
+                              style: TextStyle(
+                                color: Theme.of(context).primaryColor
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
                     ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 25,
-                      vertical: 8
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.camera_alt_rounded, color: Theme.of(context).primaryColor,),
-                        const SizedBox(width: 10,),
-                        Text(
-                          "Attach Image",
-                          style: TextStyle(
-                            color: Theme.of(context).primaryColor
+                    const SizedBox(width: 20,),
+                    pickedImage == null
+                      ? const SizedBox()
+                      : SizedBox(
+                        width: 100,
+                        child: Text(
+                          pickedImage!.name,
+                          style: const TextStyle(
+                            fontSize: 13
                           ),
-                        )
-                      ],
-                    ),
-                  ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      )
+                  ],
                 ),
                 const SizedBox(height: 40,),
                 TextFormField(
@@ -355,9 +379,38 @@ class _AddCashPageState extends State<AddCashPage> {
     );
   }
 
+  Future selectImage() async {
+    final result = await FilePicker.platform.pickFiles();
+    if(result == null) return;
+    setState(() {
+      pickedImage = result.files.first;
+    });
+  }
+
+  Future uploadImage() async {
+    final path = "cashEntries/${pickedImage!.name}";
+    final file = File(pickedImage!.path!);
+
+    final ref = FirebaseStorage.instance.ref().child(path);
+    uploadTask = ref.putFile(file);
+
+    final snapshot = await uploadTask!.whenComplete(() => {});
+
+    final imageUrl = await snapshot.ref.getDownloadURL();
+    entryImageUrl = imageUrl;
+    print("download link: $imageUrl");
+
+  }
+
+
+
   cashEntryAdd() async {
     try{
+      if(pickedImage != null) {
+        await uploadImage();
+      }
       final docRef = FirebaseFirestore.instance.collection("book").doc(widget.doc.id);
+
       Map<String, String> cashEntryToAdd={
         "amount": amountController.text.trim(),
         "remarks": remarkController.text.trim(),
@@ -367,6 +420,7 @@ class _AddCashPageState extends State<AddCashPage> {
             ? formatter.format(DateTime.now()).toString()
             : selectedDate.toString(),
         "entryTime": selectedTimeOfDay == null ? TimeOfDay.now().format(context) : selectedTimeOfDay.format(context).toString(),
+        "imageUrl": entryImageUrl == null ? " " : entryImageUrl.toString(),
       };
       widget._referenceCashEntry.add(cashEntryToAdd);
       double? currentBalance;
@@ -386,7 +440,13 @@ class _AddCashPageState extends State<AddCashPage> {
             .update({"balance": currentBalance! - double.parse(amountController.text)});
       }
 
-      Navigator.of(context).push(MaterialPageRoute(builder: (_) => BookDetailsPage(book: widget.doc, bookCollection: widget.bookCollection)));
+      Navigator.of(context)
+        .pushReplacement(MaterialPageRoute(builder: (_)
+          => BookDetailsPage(
+              book: widget.doc,
+              bookCollection: widget.bookCollection
+          )
+        ));
     }
     catch(e) {
       print(e);

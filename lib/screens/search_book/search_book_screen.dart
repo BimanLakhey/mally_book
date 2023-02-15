@@ -48,7 +48,7 @@ class _SearchBookScreenState extends State<SearchBookScreen> {
                 children: [
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
-                    child: const Icon(Icons.arrow_back)
+                    child: Icon(Icons.arrow_back, color: Theme.of(context).primaryColor,)
                   ),
                   const SizedBox(width: 20,),
                   Expanded(

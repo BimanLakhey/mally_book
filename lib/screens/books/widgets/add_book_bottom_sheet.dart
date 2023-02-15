@@ -11,6 +11,7 @@ addBookBottomSheet({
 }) {
 
   return showModalBottomSheet(
+    enableDrag: false,
     context: context,
     shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(

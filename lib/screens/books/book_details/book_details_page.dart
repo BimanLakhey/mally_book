@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:mally_book/screens/books/book_details/cash_entry_details_page.dart';
 import 'package:mally_book/screens/books/book_details/cash_in_entry_page.dart';
 import 'package:mally_book/screens/books/book_details/widgets/floating_action_widget.dart';
+import 'package:mally_book/screens/books/books_list/books_list_page.dart';
+import 'package:mally_book/screens/books/widgets/custom_popup_menu_item_widget.dart';
+
+import '../utils/delete_book.dart';
+import 'attatched_image_display.dart';
 
 class BookDetailsPage extends StatefulWidget {
   CollectionReference bookCollection;
@@ -49,6 +54,9 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.book["name"]),
+        actions: [
+          showDeleteEntryPopUp(currentBook: widget.book, books: widget.bookCollection)
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -142,6 +150,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
             "entryType": e["entryType"],
             "entryDate": e["entryDate"],
             "entryTime": e["entryTime"],
+            "imageUrl": e["imageUrl"],
           }).toList();
 
           return Column(
@@ -172,7 +181,13 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(builder: (_) =>
-                          CashEntryDetailsPage(currentEntry: documents[index], cashEntries: _referenceCashEntry,))
+                          CashEntryDetailsPage(
+                            currentEntry: documents[index],
+                            cashEntries: _referenceCashEntry,
+                            docRef: _documentReference,
+                            bookId: widget.book.id,
+                            bookCollection: widget.bookCollection
+                          ))
                         );
                       },
                       child: Container(
@@ -208,7 +223,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                                         currentEntry["paymentType"].toString()
                                       ),
                                     ),
-                                    const SizedBox(height: 10,),
+                                    SizedBox(height:currentEntry["remarks"] != "" ? 10 : 0),
                                     SizedBox(
                                       width: 70,
                                       height: 20,
@@ -220,6 +235,30 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                                         ),
                                       ),
                                     ),
+                                    SizedBox(height:currentEntry["imageUrl"] != " " ? 10 : 0),
+                                    currentEntry["imageUrl"] != " " ? GestureDetector(
+                                      onTap: () => Navigator
+                                          .of(context)
+                                          .push(
+                                            MaterialPageRoute(builder: (_) => AttachedImageDisplay(
+                                              imageUrl: currentEntry["imageUrl"],
+                                            )),
+                                          ),
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.attach_file_outlined, color: Theme.of(context).primaryColor,),
+                                          Text(
+                                            "image",
+                                            style: TextStyle(
+                                              color: Theme.of(context).primaryColor,
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w500,
+                                              decoration: TextDecoration.underline
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    ) : const SizedBox(),
                                   ],
                                 ),
                                 Text(
@@ -410,6 +449,75 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
           ),
         ],
       ),
+    );
+  }
+
+  showDeleteEntryPopUp({
+    required DocumentSnapshot currentBook,
+    required CollectionReference books
+  }) {
+    return PopupMenuButton(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12)
+        ),
+        icon: const Icon(Icons.more_vert_outlined),
+        itemBuilder: (context) {
+          return <PopupMenuItem>[
+            customPopupMenuItem(
+                icon: const Icon(Icons.delete),
+                title: "Delete Book",
+                onTap: () {
+                  confirmDeleteDialog(
+                      bookId: currentBook.id,
+                      context: context,
+                      books: books
+                  );
+                }
+            ),
+          ];
+        }
+    );
+  }
+
+  confirmDeleteDialog({
+    required String bookId,
+    required BuildContext context,
+    required CollectionReference books
+  }) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12)
+            ),
+            title: const Text("Delete Book?"),
+            content: const Text("Are you sure, you want to delete the book?"),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text("No, don't")
+              ),
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)
+                      )
+                  ),
+                  onPressed: () async {
+                    await deleteBook(productId: bookId, book: books);
+                    Navigator.pop(this.context);
+                    Navigator.pop(this.context);
+                    Navigator.pop(this.context);
+                  },
+                  child: const Text("Yes, delete")
+              )
+            ],
+          );
+        }
     );
   }
 
