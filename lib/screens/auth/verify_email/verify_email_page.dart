@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mally_book/screens/home/home_page.dart';
 
 import '../../books/books_list/books_list_page.dart';
 
@@ -66,7 +67,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
   @override
   Widget build(BuildContext context) {
     return isEmailVerified
-      ? HomePage()
+      ? const HomePage()
       : Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
         appBar: AppBar(

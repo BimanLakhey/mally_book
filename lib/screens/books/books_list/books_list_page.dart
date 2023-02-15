@@ -8,14 +8,14 @@ import '../book_details/book_details_page.dart';
 import '../widgets/add_book_bottom_sheet.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class BooksListPage extends StatefulWidget {
+  const BooksListPage({Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<BooksListPage> createState() => _BooksListPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _BooksListPageState extends State<BooksListPage> {
   final currentUser = FirebaseAuth.instance;
   final CollectionReference _book = FirebaseFirestore.instance.collection("book");
   TextEditingController renameBookController = TextEditingController();
@@ -47,12 +47,6 @@ class _HomePageState extends State<HomePage> {
         title: const Text("MallyBook"),
         centerTitle: true,
         backgroundColor: Theme.of(context).primaryColor,
-        actions: [
-          IconButton(
-            onPressed: () => showLogoutDialog(),
-            icon: const Icon(Icons.logout_outlined)
-          )
-        ],
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: screenWidth *  0.05, vertical: screenHeight * 0.05),
@@ -504,57 +498,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  showLogoutDialog() {
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-            title: const Text("Logout"),
-            titleTextStyle: TextStyle(
-                color: Theme.of(context).primaryColor
-            ),
-            content: const Text(
-              "Are you sure that you want to logout?",
-            ),
-            contentTextStyle: TextStyle(
-                color: Theme.of(context).primaryColor
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text(
-                  "Cancel",
-                  style: TextStyle(
-                    color: Theme.of(context).primaryColor
-                  ),
-                )
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).primaryColor,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30)
-                    )
-                ),
-                onPressed: () async {
-                  Navigator.pop(context);
-                  await FirebaseAuth.instance.signOut();
-                },
-                child: const Text(
-                  "Yes, logout",
-                  style: TextStyle(
-                      color: Colors.white
-                  ),
-                )
-              )
-            ],
-          );
-        }
-    );
-  }
 }
 
 class BookExample {
