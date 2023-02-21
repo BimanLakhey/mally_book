@@ -1,7 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mally_book/screens/profile/profile_page.dart';
+import 'package:mally_book/screens/settings/business_settings/business_settings_page.dart';
+import 'package:mally_book/screens/settings/profile/profile_page.dart';
+
+import 'app_settings/app_settings_page.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -9,6 +12,9 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Settings"),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -16,18 +22,7 @@ class SettingsPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "Settings",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                    color: Theme.of(context).primaryColor
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 25.0),
-                  child: Divider(),
-                ),
+                SizedBox(height: 30,),
                 const Text(
                   "Business Settings",
                   style: TextStyle(
@@ -57,7 +52,8 @@ class SettingsPage extends StatelessWidget {
                             leadingIcon: Icons.business,
                             title: "Business Settings",
                             subtitle: "Settings specific to this business",
-                            onTap: () {}
+                            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => BusinessSettingsPage(
+                            )))
                         ),
                       ],
                     ),
@@ -92,7 +88,8 @@ class SettingsPage extends StatelessWidget {
                           leadingIcon: Icons.app_settings_alt,
                           title: "App Settings",
                           subtitle: "language, Theme, Security, Backup",
-                          onTap: () {}
+                            onTap: () => Navigator.of(context)
+                                .push(MaterialPageRoute(builder: (_) => const AppSettingsScreen()))
                         ),
                         customListTile(
                             context: context,
@@ -100,7 +97,7 @@ class SettingsPage extends StatelessWidget {
                             title: "Your Profile",
                             subtitle: "Name, Mobile Number, Email",
                             onTap: () => Navigator.of(context)
-                              .push(MaterialPageRoute(builder: (_) => ProfilePage()))
+                              .push(MaterialPageRoute(builder: (_) => const ProfilePage()))
                         ),
                         customListTile(
                             context: context,
