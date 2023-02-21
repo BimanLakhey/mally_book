@@ -363,7 +363,8 @@ class _AddCashPageState extends State<AddCashPage> {
               buttonColor: Colors.transparent,
               isAddNew: true,
               screenWidth: screenWidth,
-              context: context
+              context: context,
+              onTap: saveEntryAndAddNew
             ),
             cashAddFloatingActionWidget(
               buttonName: "SAVE",
@@ -452,5 +453,58 @@ class _AddCashPageState extends State<AddCashPage> {
       print(e);
     }
   }
+
+  saveEntryAndAddNew() async {
+    try{
+      if(pickedImage != null) {
+        await uploadImage();
+      }
+      final docRef = FirebaseFirestore.instance.collection("book").doc(widget.doc.id);
+
+      Map<String, String> cashEntryToAdd={
+        "amount": amountController.text.trim(),
+        "remarks": remarkController.text.trim(),
+        "paymentType": paymentType.trim(),
+        "entryType": widget.entryType.trim(),
+        "entryDate": selectedDate == null
+            ? formatter.format(DateTime.now()).toString()
+            : selectedDate.toString(),
+        "entryTime": selectedTimeOfDay == null ? TimeOfDay.now().format(context) : selectedTimeOfDay.format(context).toString(),
+        "imageUrl": entryImageUrl == null ? " " : entryImageUrl.toString(),
+      };
+      widget._referenceCashEntry.add(cashEntryToAdd);
+      double? currentBalance;
+      await docRef.get().then(
+            (DocumentSnapshot doc) {
+          final data = doc.data() as Map<String, dynamic>;
+          currentBalance = double.parse("${data["balance"] ?? 0.0}");
+        },
+        onError: (e) => print("Error getting document: $e"),
+      );
+      if(widget.entryType == "Add") {
+        await docRef
+            .update({"balance": currentBalance! + double.parse(amountController.text)});
+      }
+      else {
+        await docRef
+            .update({"balance": currentBalance! - double.parse(amountController.text)});
+      }
+
+      Navigator.of(context)
+          .pushReplacement(MaterialPageRoute(builder: (_)
+      => AddCashPage(
+        title: widget.title,
+        bookCollection: widget.bookCollection,
+        doc: widget.doc,
+        entryType: widget.entryType,
+
+      )
+      ));
+    }
+    catch(e) {
+      print(e);
+    }
+  }
+
 
 }

@@ -29,19 +29,19 @@ class _HomePageState extends State<HomePage> {
 
   PageController? _pageController;
   int currentIndex = 0;
-  GlobalKey<ScaffoldMessengerState> _scaffoldKey = GlobalKey();
+  final GlobalKey<ScaffoldMessengerState> _scaffoldKey = GlobalKey();
 
   @override
   void initState() {
     _pageController = PageController(initialPage: currentIndex);
 
-    _pages = [
+    _pages = const [
       BooksListPage(),
       HelpPage(),
       SettingsPage()
     ];
 
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(const Duration(seconds: 1), () {
       if(_scaffoldKey.currentState != null) {
         setState(() {});
       }

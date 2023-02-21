@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mally_book/screens/profile/profile_page.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -98,7 +99,8 @@ class SettingsPage extends StatelessWidget {
                             leadingIcon: CupertinoIcons.person_alt_circle,
                             title: "Your Profile",
                             subtitle: "Name, Mobile Number, Email",
-                            onTap: () {}
+                            onTap: () => Navigator.of(context)
+                              .push(MaterialPageRoute(builder: (_) => ProfilePage()))
                         ),
                         customListTile(
                             context: context,
