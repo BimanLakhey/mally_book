@@ -39,6 +39,10 @@ class MyApp extends StatelessWidget {
         ),
         // accentColor: Colors.pinkAccent
       ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark
+      ),
+      themeMode: ThemeMode.dark,
       home: const SplashPage(),
     );
   }

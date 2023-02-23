@@ -35,10 +35,10 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     _pageController = PageController(initialPage: currentIndex);
 
-    _pages = const [
-      BooksListPage(),
+    _pages = [
+      const BooksListPage(),
       HelpPage(),
-      SettingsPage()
+      const SettingsPage()
     ];
 
     Future.delayed(const Duration(seconds: 1), () {

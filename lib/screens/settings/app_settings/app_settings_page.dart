@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AppSettingsScreen extends StatefulWidget {
   const AppSettingsScreen({Key? key}) : super(key: key);
@@ -9,11 +10,15 @@ class AppSettingsScreen extends StatefulWidget {
 }
 
 class _AppSettingsScreenState extends State<AppSettingsScreen> {
-  bool appLock = false;
   bool enableNotifications = false;
-  bool calculator = false;
   bool darkTheme = false;
+  late SharedPreferences _prefs;
 
+  @override
+  void initState() {
+    initiateSharedPreferences();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,41 +30,6 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.0),
-              child: Text(
-                "Data Security",
-                style: TextStyle(
-                    fontSize: 15,
-                    color: Colors.black54,
-                    fontWeight: FontWeight.w400
-                ),
-              ),
-            ),
-            const SizedBox(height: 20,),
-            ListTile(
-              leading: Icon(
-                Icons.lock_outline_rounded,
-                size: 25,
-                color: Theme.of(context).primaryColor,
-              ),
-              title: const Text(
-                "App Lock",
-                style: TextStyle(
-                  fontSize: 17
-                ),
-              ),
-              trailing: CupertinoSwitch(
-                activeColor: Theme.of(context).primaryColor,
-                value: appLock,
-                onChanged: (_) {
-                  appLock = !appLock;
-                  setState(() {
-
-                  });
-                },
-              ),
-            ),
             const SizedBox(height: 30,),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.0),
@@ -88,32 +58,9 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
               trailing: CupertinoSwitch(
                 activeColor: Theme.of(context).primaryColor,
                 value: enableNotifications,
-                onChanged: (_) {
+                onChanged: (_) async {
                   enableNotifications = !enableNotifications;
-                  setState(() {
-
-                  });
-                },
-              ),
-            ),
-            const SizedBox(height: 20,),
-            ListTile(
-              leading: Icon(
-                Icons.calculate_outlined,
-                size: 25,
-                color: Theme.of(context).primaryColor,
-              ),
-              title: const Text(
-                "Amount Field Calculator",
-                style: TextStyle(
-                    fontSize: 17
-                ),
-              ),
-              trailing: CupertinoSwitch(
-                activeColor: Theme.of(context).primaryColor,
-                value: calculator,
-                onChanged: (_) {
-                  calculator = !calculator;
+                  await _prefs.setBool("enableNotification", enableNotifications);
                   setState(() {
 
                   });
@@ -148,8 +95,9 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
               trailing: CupertinoSwitch(
                 activeColor: Theme.of(context).primaryColor,
                 value: darkTheme,
-                onChanged: (_) {
+                onChanged: (_) async {
                   darkTheme = !darkTheme;
+                  await _prefs.setBool("enableDarkTheme", darkTheme);
                   setState(() {
 
                   });
@@ -160,5 +108,15 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
         ),
       ),
     );
+  }
+
+  initiateSharedPreferences() async {
+    _prefs = await SharedPreferences.getInstance();
+    enableNotifications = _prefs.getBool("enableNotification") ?? false;
+    darkTheme = _prefs.getBool("enableDarkTheme") ?? false;
+    setState(() {
+
+    });
+
   }
 }
