@@ -58,7 +58,10 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
           showDeleteEntryPopUp(currentBook: widget.book, books: widget.bookCollection)
         ],
       ),
-      body: SingleChildScrollView(
+      backgroundColor: Theme.of(context).backgroundColor,
+      body: currentBalance == null
+        ? const Center(child: CircularProgressIndicator(),)
+        : SingleChildScrollView(
         child: Column(
           children: [
             buildSearchEntry(),
@@ -134,14 +137,14 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
         else if(snapshot.hasData) {
           QuerySnapshot data = snapshot.data;
           List<QueryDocumentSnapshot> documents = data.docs;
-          documents.forEach((element) {
+          for (var element in documents) {
             if(element["entryType"] == "Add") {
               totalIn++;
             }
             else if(element["entryType"] == "Remove") {
               totalOut++;
             }
-          });
+          }
           List<Map> cashEntries = documents.map((e) => {
             "id": e.id,
             "amount": e["amount"],
@@ -163,7 +166,6 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
-                      color: Colors.black54
                     ),
                   ),
                   const Expanded(child: Divider()),
@@ -191,14 +193,14 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                         );
                       },
                       child: Container(
-                        margin: EdgeInsets.only(bottom: 30),
+                        margin: const EdgeInsets.only(bottom: 30),
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(15),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.grey.shade300,
+                              color: Theme.of(context).shadowColor,
                               blurRadius: 10,
                               offset: const Offset(3, 3)
                             )
@@ -220,7 +222,10 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                                         borderRadius: BorderRadius.circular(12)
                                       ),
                                        child: Text(
-                                        currentEntry["paymentType"].toString()
+                                        currentEntry["paymentType"].toString(),
+                                         style: TextStyle(
+                                           color: Theme.of(context).primaryColor
+                                         ),
                                       ),
                                     ),
                                     SizedBox(height:currentEntry["remarks"] != "" ? 10 : 0),
@@ -339,7 +344,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
             color: Colors.white,
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.shade300,
+                color: Theme.of(context).shadowColor,
                 blurRadius: 10,
                 offset: const Offset(3,3)
               )
@@ -347,7 +352,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
           ),
           child: Row(
             children: [
-              Icon(Icons.search, color: Theme.of(context).primaryColor,),
+              Icon(Icons.search, color: Theme.of(context).splashColor,),
               const SizedBox(width: 20,),
               const Text(
                 "Search by remark or amount",
@@ -373,7 +378,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
         boxShadow: [
           BoxShadow(
             blurRadius: 10,
-            color: Colors.grey.shade300,
+            color: Theme.of(context).shadowColor,
             offset: const Offset(5,5)
           )
         ]
@@ -387,14 +392,16 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                 "Net Balance",
                 style: TextStyle(
                   fontSize: 18,
-                  fontWeight: FontWeight.bold
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black
                 ),
               ),
               Text(
               "${currentBalance ?? 0.0}",
-                style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: currentBalance! == 0.0 ? Colors.grey : currentBalance! > 0.0 ? Colors.green : Colors.red
                 ),
               ),
 
@@ -410,8 +417,9 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
               const Text(
                 "Total In (+)",
                 style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black
                 ),
               ),
               Text(
@@ -433,7 +441,8 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                 "Total Out (-)",
                 style: TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.w500
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black
                 ),
               ),
               Text(

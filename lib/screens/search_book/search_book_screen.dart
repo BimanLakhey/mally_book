@@ -38,6 +38,7 @@ class _SearchBookScreenState extends State<SearchBookScreen> {
     var screenWidth = MediaQuery.of(context).size.width;
     var screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
       body: SafeArea(
         child: Column(
           children: [
@@ -48,7 +49,7 @@ class _SearchBookScreenState extends State<SearchBookScreen> {
                 children: [
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
-                    child: Icon(Icons.arrow_back, color: Theme.of(context).primaryColor,)
+                    child: Icon(Icons.arrow_back, color: Theme.of(context).splashColor,)
                   ),
                   const SizedBox(width: 20,),
                   Expanded(
@@ -58,11 +59,11 @@ class _SearchBookScreenState extends State<SearchBookScreen> {
                         hintText: "Search by book name",
                         focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
-                            color: Theme.of(context).primaryColor,
+                            color: Theme.of(context).splashColor,
                             width: 2
                           )
                         ),
-                        suffixIcon: Icon(Icons.search, color: Theme.of(context).primaryColor,),
+                        suffixIcon: Icon(Icons.search, color: Theme.of(context).splashColor,),
                       ),
                       onSubmitted: (_) {
                         searchedBooks.clear();

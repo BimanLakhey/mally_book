@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mally_book/configs/app_config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppSettingsScreen extends StatefulWidget {
@@ -25,6 +26,7 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
       appBar: AppBar(
         title: const Text("App Settings"),
       ),
+      backgroundColor: Theme.of(context).backgroundColor,
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 30.0),
         child: Column(
@@ -37,7 +39,6 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
                 "Features",
                 style: TextStyle(
                     fontSize: 15,
-                    color: Colors.black54,
                     fontWeight: FontWeight.w400
                 ),
               ),
@@ -47,7 +48,7 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
               leading: Icon(
                 Icons.notifications_none_outlined,
                 size: 25,
-                color: Theme.of(context).primaryColor,
+                color: Theme.of(context).splashColor,
               ),
               title: const Text(
                 "Notifications",
@@ -56,7 +57,7 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
                 ),
               ),
               trailing: CupertinoSwitch(
-                activeColor: Theme.of(context).primaryColor,
+                activeColor: Theme.of(context).splashColor,
                 value: enableNotifications,
                 onChanged: (_) async {
                   enableNotifications = !enableNotifications;
@@ -74,7 +75,6 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
                 "General",
                 style: TextStyle(
                     fontSize: 15,
-                    color: Colors.black54,
                     fontWeight: FontWeight.w400
                 ),
               ),
@@ -84,7 +84,7 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
               leading: Icon(
                 Icons.nightlight_outlined,
                 size: 25,
-                color: Theme.of(context).primaryColor,
+                color: Theme.of(context).splashColor,
               ),
               title: const Text(
                 "Dark Theme",
@@ -93,13 +93,13 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
                 ),
               ),
               trailing: CupertinoSwitch(
-                activeColor: Theme.of(context).primaryColor,
+                activeColor: Theme.of(context).splashColor,
                 value: darkTheme,
                 onChanged: (_) async {
                   darkTheme = !darkTheme;
                   await _prefs.setBool("enableDarkTheme", darkTheme);
                   setState(() {
-
+                    themeSettings.switchTheme();
                   });
                 },
               ),

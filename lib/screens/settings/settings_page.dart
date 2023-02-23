@@ -13,8 +13,9 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Settings"),
+        title: const Text("Settings"),
       ),
+      backgroundColor: Theme.of(context).backgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -22,13 +23,10 @@ class SettingsPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 30,),
-                const Text(
+                const SizedBox(height: 30,),
+                Text(
                   "Business Settings",
-                  style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.black54
-                  ),
+                  style: Theme.of(context).textTheme.titleSmall
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0,15,0,30),
@@ -39,7 +37,7 @@ class SettingsPage extends StatelessWidget {
                           BoxShadow(
                               offset: const Offset(3,3),
                               blurRadius: 10,
-                              color: Colors.grey.shade300
+                              color: Theme.of(context).shadowColor
                           )
                         ],
                         color: Colors.white
@@ -59,12 +57,9 @@ class SettingsPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                const Text(
+                Text(
                   "General Settings",
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: Colors.black54
-                  ),
+                  style: Theme.of(context).textTheme.titleSmall
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0,15,0,30),
@@ -75,7 +70,7 @@ class SettingsPage extends StatelessWidget {
                         BoxShadow(
                           offset: const Offset(3,3),
                           blurRadius: 10,
-                          color: Colors.grey.shade300
+                          color: Theme.of(context).shadowColor
                         )
                       ],
                       color: Colors.white
@@ -121,7 +116,7 @@ class SettingsPage extends StatelessWidget {
                         BoxShadow(
                           blurRadius: 10,
                           offset: const Offset(3,3),
-                          color: Colors.grey.shade300
+                          color: Theme.of(context).shadowColor
                         )
                       ]
                     ),
@@ -177,6 +172,7 @@ class SettingsPage extends StatelessWidget {
           title,
           style: const TextStyle(
             fontWeight: FontWeight.bold,
+            color: Colors.black
           ),
         ),
         subtitle: Text(

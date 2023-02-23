@@ -34,13 +34,14 @@ addBookBottomSheet({
                       children: [
                         IconButton(
                             onPressed: () => Navigator.of(context).pop(),
-                            icon: const Icon(Icons.close)
+                            icon: const Icon(Icons.close, color: Colors.black,)
                         ),
                         const Text(
                           "Add New Book",
                           style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 18
+                            fontWeight: FontWeight.w500,
+                            fontSize: 18,
+                            color: Colors.black
                           ),
                         )
                       ],
@@ -58,6 +59,9 @@ addBookBottomSheet({
                           }
                           return null;
                         },
+                        style: TextStyle(
+                          color: Colors.black
+                        ),
                         decoration: InputDecoration(
                             label: const Text("Book Name"),
                             focusedBorder: OutlineInputBorder(
@@ -72,6 +76,9 @@ addBookBottomSheet({
                                 color: Theme.of(context).primaryColor
                             ),
                             hintText: "Enter book name",
+                            hintStyle: TextStyle(
+                              color: Colors.black54
+                            ),
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12)
                             )

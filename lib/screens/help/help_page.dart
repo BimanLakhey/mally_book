@@ -46,6 +46,7 @@ class _HelpPageState extends State<HelpPage> {
       appBar: AppBar(
         title: const Text("Reach The Support Team"),
       ),
+      backgroundColor: Theme.of(context).backgroundColor,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -56,7 +57,7 @@ class _HelpPageState extends State<HelpPage> {
               Icon(
                 CupertinoIcons.headphones,
                 size: 70,
-                color: Theme.of(context).primaryColor,
+                color: Theme.of(context).splashColor,
               ),
               const SizedBox(height: 20,),
               const Text(
@@ -64,7 +65,6 @@ class _HelpPageState extends State<HelpPage> {
                 style: TextStyle(
                   fontSize: 25,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87
                 ),
               ),
               const SizedBox(height: 40,),
@@ -77,7 +77,7 @@ class _HelpPageState extends State<HelpPage> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: Theme.of(context).primaryColor,
+                      color: Theme.of(context).splashColor,
                       width: 1
                     )
                   ),
@@ -89,7 +89,7 @@ class _HelpPageState extends State<HelpPage> {
                           Icon(
                             CupertinoIcons.headphones,
                             size: 30,
-                            color: Theme.of(context).primaryColor,
+                            color: Theme.of(context).splashColor,
                           ),
                           const SizedBox(width: 10,),
                           const Text(
@@ -104,7 +104,7 @@ class _HelpPageState extends State<HelpPage> {
                       Icon(
                         Icons.arrow_forward_ios_outlined,
                         size: 22,
-                        color: Theme.of(context).primaryColor,
+                        color: Theme.of(context).splashColor,
                       )
 
                     ],
@@ -115,14 +115,13 @@ class _HelpPageState extends State<HelpPage> {
               Icon(
                 Icons.mail_outline_rounded,
                 size: 40,
-                color: Theme.of(context).primaryColor,
+                color: Theme.of(context).splashColor,
               ),
               const SizedBox(height: 40,),
               const Text(
                 "Send us an e-mail",
                 style: TextStyle(
                   fontSize: 18,
-                  color: Colors.black54
                 ),
               ),
               const SizedBox(height: 10,),

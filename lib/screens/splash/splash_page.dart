@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mally_book/configs/app_config.dart';
 import 'package:mally_book/screens/auth/login/login_page.dart';
 import 'package:mally_book/screens/auth/verify_email/verify_email_page.dart';
 
@@ -57,8 +58,10 @@ class _SplashPageState extends State<SplashPage> {
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.4,
             width: MediaQuery.of(context).size.width,
-            child: Image.asset(
+            child:themeSettings.currentTheme() == ThemeMode.light ? Image.asset(
               "assets/images/app_logo.png",
+            ) : Image.asset(
+                "assets/images/app_logo_dark.png"
             ),
           ),
           SizedBox(

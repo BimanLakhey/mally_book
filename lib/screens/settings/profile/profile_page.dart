@@ -42,6 +42,7 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(
         title: const Text("Profile"),
       ),
+      backgroundColor: Theme.of(context).backgroundColor,
       body: SingleChildScrollView(
         child: Center(
           child: Padding(
@@ -63,7 +64,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           BoxShadow(
                             blurRadius: 10,
                             offset: const Offset(3,3),
-                            color: Colors.grey.shade300
+                            color: Theme.of(context).shadowColor
                           )
                         ],
                       ),
@@ -95,75 +96,89 @@ class _ProfilePageState extends State<ProfilePage> {
                   ],
                 ),
                 SizedBox(height: screenHeight * 0.2,),
-                Column(
-                  children: [
-                    TextFormField(
-                      controller: firstNameController,
-                      decoration: InputDecoration(
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          focusedBorder: OutlineInputBorder(
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        blurRadius: 10,
+                        offset: const Offset(3,3),
+                        color: Theme.of(context).shadowColor
+                      )
+                    ]
+                  ),
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        controller: firstNameController,
+                        decoration: InputDecoration(
+                            enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
-                              borderSide: BorderSide(
-                                  color: Theme.of(context).primaryColor,
-                                  width: 2
-                              )
-                          ),
-                          label: const Text("First Name"),
-                          labelStyle: TextStyle(
-                              color: Theme.of(context).primaryColor
-                          ),
-                          hintText: "Enter your first name"
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30),
+                                borderSide: BorderSide(
+                                    color: Theme.of(context).primaryColor,
+                                    width: 2
+                                )
+                            ),
+                            label: const Text("First Name"),
+                            labelStyle: TextStyle(
+                                color: Theme.of(context).primaryColor
+                            ),
+                            hintText: "Enter your first name"
+                        ),
                       ),
-                    ),
-                    SizedBox(height: screenHeight * 0.1,),
-                    TextFormField(
-                      controller: lastNameController,
-                      decoration: InputDecoration(
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          focusedBorder: OutlineInputBorder(
+                      SizedBox(height: screenHeight * 0.1,),
+                      TextFormField(
+                        controller: lastNameController,
+                        decoration: InputDecoration(
+                            enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
-                              borderSide: BorderSide(
-                                  color: Theme.of(context).primaryColor,
-                                  width: 2
-                              )
-                          ),
-                          label: const Text("Last Name"),
-                          labelStyle: TextStyle(
-                              color: Theme.of(context).primaryColor
-                          ),
-                          hintText: "Enter your last name"
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30),
+                                borderSide: BorderSide(
+                                    color: Theme.of(context).primaryColor,
+                                    width: 2
+                                )
+                            ),
+                            label: const Text("Last Name"),
+                            labelStyle: TextStyle(
+                                color: Theme.of(context).primaryColor
+                            ),
+                            hintText: "Enter your last name"
+                        ),
                       ),
-                    ),
-                    SizedBox(height: screenHeight * 0.15,),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(context).primaryColor,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30)
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 20)
-                      ),
-                      onPressed: _isLoading ? () {}  : updateUserProfile,
-                      child: Center(
-                        child: _isLoading
-                            ? const SizedBox(
-                          height: 21,
-                          width: 21,
-                          child: CircularProgressIndicator(color: Colors.white,),
-                        )
-                            : const Text(
-                          "Save Changes",
-                          style: TextStyle(
-                              fontSize: 18
+                      SizedBox(height: screenHeight * 0.15,),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(context).primaryColor,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30)
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 20)
+                        ),
+                        onPressed: _isLoading ? () {}  : updateUserProfile,
+                        child: Center(
+                          child: _isLoading
+                              ? const SizedBox(
+                            height: 21,
+                            width: 21,
+                            child: CircularProgressIndicator(color: Colors.white,),
+                          )
+                              : const Text(
+                            "Save Changes",
+                            style: TextStyle(
+                                fontSize: 18
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),

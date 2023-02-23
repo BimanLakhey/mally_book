@@ -17,6 +17,7 @@ class _BusinessSettingsPageState extends State<BusinessSettingsPage> {
       appBar: AppBar(
         title: const Text("Business Settings"),
       ),
+      backgroundColor: Theme.of(context).backgroundColor,
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 30.0),
         child: Column(
@@ -28,7 +29,6 @@ class _BusinessSettingsPageState extends State<BusinessSettingsPage> {
                 "General",
                 style: TextStyle(
                     fontSize: 15,
-                    color: Colors.black54,
                     fontWeight: FontWeight.w400
                 ),
               ),
@@ -47,7 +47,7 @@ class _BusinessSettingsPageState extends State<BusinessSettingsPage> {
                 "Delete Business",
                 style: TextStyle(
                   fontSize: 17,
-                  fontWeight: FontWeight.w500
+                  fontWeight: FontWeight.w500,
                 ),
               ),
               subtitle: const Text("Delete all the data of this business\npermanently"),

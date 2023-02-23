@@ -32,13 +32,14 @@ bookBottomSheet({
                       children: [
                         IconButton(
                             onPressed: () => Navigator.of(context).pop(),
-                            icon: const Icon(Icons.close)
+                            icon: const Icon(Icons.close, color: Colors.black,)
                         ),
                         const Text(
                           "Rename cashbook",
                           style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 18
+                            fontWeight: FontWeight.w500,
+                            fontSize: 18,
+                            color: Colors.black
                           ),
                         )
                       ],
@@ -47,6 +48,9 @@ bookBottomSheet({
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15),
                       child: TextFormField(
+                        style: TextStyle(
+                            color: Colors.black
+                        ),
                         controller: renameBookController,
                         focusNode: renameBookNode,
                         autofocus: true,
@@ -70,6 +74,9 @@ bookBottomSheet({
                                 color: Theme.of(context).primaryColor
                             ),
                             hintText: "Enter book name",
+                            hintStyle: TextStyle(
+                              color: Colors.black54
+                            ),
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12)
                             )

@@ -31,6 +31,7 @@ class _CashEntryDetailsPageState extends State<CashEntryDetailsPage> {
           )
         ],
       ),
+      backgroundColor: Theme.of(context).backgroundColor,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -45,7 +46,7 @@ class _CashEntryDetailsPageState extends State<CashEntryDetailsPage> {
                   boxShadow: [
                     BoxShadow(
                       blurRadius: 10,
-                      color: Colors.grey.shade300,
+                      color: Theme.of(context).shadowColor,
                       offset: const Offset(3,3)
                     )
                   ]
@@ -85,8 +86,9 @@ class _CashEntryDetailsPageState extends State<CashEntryDetailsPage> {
                               Text(
                                 "On ${widget.currentEntry["entryDate"]}, ${widget.currentEntry["entryTime"]}",
                                 style: const TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w500
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black
                                 ),
                               ),
                             ],
@@ -117,7 +119,10 @@ class _CashEntryDetailsPageState extends State<CashEntryDetailsPage> {
                                 borderRadius: BorderRadius.circular(12)
                             ),
                             child: Text(
-                                widget.currentEntry["paymentType"].toString()
+                              widget.currentEntry["paymentType"].toString(),
+                              style: TextStyle(
+                                color: Theme.of(context).primaryColor
+                              ),
                             ),
                           ),
                           const Divider(),
@@ -159,7 +164,7 @@ class _CashEntryDetailsPageState extends State<CashEntryDetailsPage> {
                   boxShadow: [
                     BoxShadow(
                         blurRadius: 10,
-                        color: Colors.grey.shade300,
+                        color: Theme.of(context).shadowColor,
                         offset: const Offset(3,3)
                     )
                   ]

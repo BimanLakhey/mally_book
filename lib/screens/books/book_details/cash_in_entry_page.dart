@@ -68,7 +68,6 @@ class _AddCashPageState extends State<AddCashPage> {
           widget.title,
         ),
       ),
-      backgroundColor: Theme.of(context).backgroundColor,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -104,7 +103,8 @@ class _AddCashPageState extends State<AddCashPage> {
                             selectedDate != null ? selectedDate.toString() : formatter.format(DateTime.now()).toString(),
                             style: const TextStyle(
                               fontSize: 16,
-                              fontWeight: FontWeight.w500
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black
                             ),
                           ),
                           const SizedBox(width: 10,),
@@ -136,7 +136,8 @@ class _AddCashPageState extends State<AddCashPage> {
                             selectedTimeOfDay != null ? selectedTimeOfDay.format(context).toString() : TimeOfDay.now().format(context),
                             style: const TextStyle(
                                 fontSize: 16,
-                                fontWeight: FontWeight.w500
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black
                             ),
                           ),
                           const SizedBox(width: 10,),
@@ -157,6 +158,9 @@ class _AddCashPageState extends State<AddCashPage> {
                     }
                     return null;
                   },
+                  style: TextStyle(
+                      color: Colors.black
+                  ),
                   controller: amountController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
@@ -194,6 +198,9 @@ class _AddCashPageState extends State<AddCashPage> {
                 const SizedBox(height: 40,),
                 TextField(
                   // controller: amountController,
+                  style: TextStyle(
+                      color: Colors.black
+                  ),
                   decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
@@ -214,6 +221,9 @@ class _AddCashPageState extends State<AddCashPage> {
                 ),
                 const SizedBox(height: 40,),
                 TextFormField(
+                  style: TextStyle(
+                      color: Colors.black
+                  ),
                   controller: remarkController,
                   decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(

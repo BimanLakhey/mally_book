@@ -131,10 +131,7 @@ class _BooksListPageState extends State<BooksListPage> {
           children: [
             Text(
               "Your Books",
-              style: TextStyle(
-                  fontSize: screenWidth! / 23,
-                  color: Colors.black54
-              ),
+              style: Theme.of(context).textTheme.titleSmall,
             ),
             IconButton(
                 onPressed: () {
@@ -152,7 +149,7 @@ class _BooksListPageState extends State<BooksListPage> {
                   Icons.search,
                   color: Theme
                       .of(context)
-                      .primaryColor,
+                      .canvasColor,
                 )
             )
           ],
@@ -249,7 +246,7 @@ class _BooksListPageState extends State<BooksListPage> {
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                    color: Colors.grey.shade300,
+                    color: Theme.of(context).shadowColor,
                     blurRadius: 10,
                     offset: const Offset(3, 3)
                 )
@@ -268,6 +265,7 @@ class _BooksListPageState extends State<BooksListPage> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
+                          color: Colors.black
                         ),
                       ),
                       SizedBox(height: screenHeight * 0.01,),
@@ -355,7 +353,7 @@ class _BooksListPageState extends State<BooksListPage> {
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                    color: Colors.grey.shade300,
+                    color: Theme.of(context).shadowColor,
                     blurRadius: 10,
                     offset: const Offset(3, 3)
                 )
@@ -381,7 +379,8 @@ class _BooksListPageState extends State<BooksListPage> {
                     "Need help in business setup?",
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 16
+                        fontSize: 16,
+                      color: Colors.black
                     ),
                   ),
                   SizedBox(height: screenHeight * 0.01,),
