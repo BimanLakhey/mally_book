@@ -5,6 +5,7 @@ import 'package:mally_book/screens/books/book_details/cash_in_entry_page.dart';
 import 'package:mally_book/screens/books/book_details/widgets/floating_action_widget.dart';
 import 'package:mally_book/screens/books/books_list/books_list_page.dart';
 import 'package:mally_book/screens/books/widgets/custom_popup_menu_item_widget.dart';
+import 'package:mally_book/screens/search_cash_entries/search_cash_entries.dart';
 
 import '../utils/delete_book.dart';
 import 'attatched_image_display.dart';
@@ -21,14 +22,19 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
   late DocumentReference _documentReference;
   late CollectionReference _referenceCashEntry;
   late Stream<QuerySnapshot> _cashEntriesStream;
-  int totalIn = 0;
-  int totalOut = 0;
+  List<Map>? cashEntries;
+  // int totalIn = 0;
+  // int totalOut = 0;
   double? currentBalance;
+  int? totalIn;
+  int? totalOut;
   loadBalance() async {
     await _documentReference.get().then(
           (DocumentSnapshot doc) {
         final data = doc.data() as Map<String, dynamic>;
         currentBalance = double.parse("${data["balance"] ?? 0.0}");
+        totalIn = int.parse("${data["totalIn"] ?? 0}");
+        totalOut = int.parse("${data["totalOut"] ?? 0}");
       },
       onError: (e) => print("Error getting document: $e"),
     );
@@ -59,7 +65,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
         ],
       ),
       backgroundColor: Theme.of(context).backgroundColor,
-      body: currentBalance == null
+      body: currentBalance == null || totalIn == null || totalOut == null
         ? const Center(child: CircularProgressIndicator(),)
         : SingleChildScrollView(
         child: Column(
@@ -135,17 +141,19 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
           return Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,));
         }
         else if(snapshot.hasData) {
+
           QuerySnapshot data = snapshot.data;
           List<QueryDocumentSnapshot> documents = data.docs;
-          for (var element in documents) {
-            if(element["entryType"] == "Add") {
-              totalIn++;
-            }
-            else if(element["entryType"] == "Remove") {
-              totalOut++;
-            }
-          }
-          List<Map> cashEntries = documents.map((e) => {
+          // for (var element in documents) {
+          //   if(element["entryType"] == "Add") {
+          //     totalIn++;
+          //   }
+          //   else if(element["entryType"] == "Remove") {
+          //     totalOut++;
+          //   }
+          // }
+
+          cashEntries = documents.map((e) => {
             "id": e.id,
             "amount": e["amount"],
             "remarks": e["remarks"],
@@ -162,7 +170,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                 children: [
                   const Expanded(child: Divider()),
                   Text(
-                    "Showing ${cashEntries.length} entries",
+                    "Showing ${cashEntries!.length} entries",
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
@@ -176,9 +184,9 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                 child: ListView.builder(
                   physics: const BouncingScrollPhysics(),
                   shrinkWrap: true,
-                  itemCount: cashEntries.length,
+                  itemCount: cashEntries!.length,
                   itemBuilder: (context, index) {
-                    Map currentEntry = cashEntries[index];
+                    Map currentEntry = cashEntries![index];
                     return GestureDetector(
                       onTap: () {
                         Navigator.of(context).push(
@@ -336,7 +344,12 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: GestureDetector(
         onTap: () {
-          print("search");
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) =>
+                  SearchCashEntriesPage(
+                    book: widget.bookCollection,
+                    cashEntries: cashEntries,
+                  )));
         },
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 26, horizontal: 15),
@@ -423,7 +436,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                 ),
               ),
               Text(
-                totalIn.toString(),
+                "${totalIn ?? 0}",
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
@@ -446,7 +459,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                 ),
               ),
               Text(
-                totalOut.toString(),
+                "${totalOut ?? 0}",
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,

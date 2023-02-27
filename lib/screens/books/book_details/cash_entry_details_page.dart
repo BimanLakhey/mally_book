@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mally_book/screens/books/book_details/book_details_page.dart';
+import 'package:mally_book/screens/books/book_details/edit_entry_page.dart';
 import 'package:mally_book/screens/books/widgets/confirm_delete_dialog.dart';
 import 'package:mally_book/screens/books/widgets/custom_popup_menu_item_widget.dart';
 
@@ -128,7 +129,16 @@ class _CashEntryDetailsPageState extends State<CashEntryDetailsPage> {
                           const Divider(),
                           GestureDetector(
                             onTap: () {
-
+                              Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(builder: (_) => EditEntryPage(
+                                  title: "Edit Entry",
+                                  doc: widget.currentEntry,
+                                  entryType: widget.currentEntry["entryType"],
+                                  cashEntries: widget.cashEntries,
+                                  bookId: widget.bookId,
+                                  bookCollection: widget.bookCollection,
+                                ))
+                              );
                             },
                             child: SizedBox(
                               child: Center(
@@ -225,24 +235,34 @@ class _CashEntryDetailsPageState extends State<CashEntryDetailsPage> {
     );
   }
 
-  Future<void> deleteEntry({required String entryId, required var cashEntries}) async {
+  Future<void> deleteEntry({required String entryId, required CollectionReference cashEntries}) async {
     try {
       await cashEntries.doc(entryId).delete();
       double? currentBalance;
+      int? totalIn;
+      int? totalOut;
       await widget.docRef.get().then(
             (DocumentSnapshot doc) {
           final data = doc.data() as Map<String, dynamic>;
           currentBalance = double.parse("${data["balance"] ?? 0.0}");
+          totalIn = int.parse("${data["totalIn"] ?? 0}");
+          totalOut = int.parse("${data["totalOut"] ?? 0}");
         },
         onError: (e) => print("Error getting document: $e"),
       );
       if(widget.currentEntry["entryType"] == "Add") {
         await widget.docRef
-            .update({"balance": currentBalance! - double.parse(widget.currentEntry["amount"])});
+          .update({
+            "balance": currentBalance! - double.parse(widget.currentEntry["amount"]),
+            "totalIn": totalIn! - 1
+          });
       }
       else {
         await widget.docRef
-          .update({"balance": currentBalance! + double.parse(widget.currentEntry["amount"])});
+            .update({
+          "balance": currentBalance! + double.parse(widget.currentEntry["amount"]),
+          "totalOut": totalOut! - 1
+        });
       }
     } catch(e) {
       print(e);

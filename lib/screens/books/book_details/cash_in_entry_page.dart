@@ -68,6 +68,7 @@ class _AddCashPageState extends State<AddCashPage> {
           widget.title,
         ),
       ),
+      backgroundColor: Theme.of(context).backgroundColor,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -435,20 +436,30 @@ class _AddCashPageState extends State<AddCashPage> {
       };
       widget._referenceCashEntry.add(cashEntryToAdd);
       double? currentBalance;
+      int? totalIn;
+      int? totalOut;
       await docRef.get().then(
             (DocumentSnapshot doc) {
           final data = doc.data() as Map<String, dynamic>;
           currentBalance = double.parse("${data["balance"] ?? 0.0}");
+          totalIn = int.parse("${data["totalIn"] ?? 0}");
+          totalOut = int.parse("${data["totalOut"] ?? 0}");
         },
         onError: (e) => print("Error getting document: $e"),
       );
       if(widget.entryType == "Add") {
         await docRef
-            .update({"balance": currentBalance! + double.parse(amountController.text)});
+          .update({
+            "balance": currentBalance! + double.parse(amountController.text),
+            "totalIn": totalIn = totalIn!+1
+          });
       }
       else {
         await docRef
-            .update({"balance": currentBalance! - double.parse(amountController.text)});
+            .update({
+              "balance": currentBalance! - double.parse(amountController.text),
+              "totalOut": totalOut = totalOut!+1
+            });
       }
 
       Navigator.of(context)

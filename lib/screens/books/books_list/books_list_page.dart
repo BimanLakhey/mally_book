@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mally_book/screens/books/widgets/show_popup_widget.dart';
-import 'package:mally_book/screens/search_book/search_book_screen.dart';
+import 'package:mally_book/screens/search_book/search_book_page.dart';
 import '../book_details/book_details_page.dart';
 import '../widgets/add_book_bottom_sheet.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -137,7 +137,7 @@ class _BooksListPageState extends State<BooksListPage> {
                 onPressed: () {
                   Navigator.of(context).push(
                       MaterialPageRoute(builder: (_) =>
-                          SearchBookScreen(
+                          SearchBookPage(
                             renameBookController: renameBookController,
                             renameBookFormKey: _renameBookFormKey,
                             renameBookNode: renameBookNode,
@@ -149,7 +149,7 @@ class _BooksListPageState extends State<BooksListPage> {
                   Icons.search,
                   color: Theme
                       .of(context)
-                      .canvasColor,
+                      .primaryColor,
                 )
             )
           ],

@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:mally_book/screens/books/book_details/book_details_page.dart';
 import 'package:mally_book/screens/books/widgets/show_popup_widget.dart';
 
-class SearchBookScreen extends StatefulWidget {
+class SearchBookPage extends StatefulWidget {
   TextEditingController renameBookController;
   FocusNode renameBookNode;
   GlobalKey<FormState> renameBookFormKey;
   List<QueryDocumentSnapshot> books;
   CollectionReference book;
-  SearchBookScreen({
+  SearchBookPage({
     Key? key,
     required this.renameBookController,
     required this.renameBookNode,
@@ -20,10 +20,10 @@ class SearchBookScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<SearchBookScreen> createState() => _SearchBookScreenState();
+  State<SearchBookPage> createState() => _SearchBookPageState();
 }
 
-class _SearchBookScreenState extends State<SearchBookScreen> {
+class _SearchBookPageState extends State<SearchBookPage> {
   TextEditingController searchController = TextEditingController();
   List<QueryDocumentSnapshot> searchedBooks = [];
 

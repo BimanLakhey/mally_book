@@ -41,7 +41,7 @@ class _MyAppState extends State<MyApp> {
         brightness: Brightness.light,
         primaryColor: const Color(0xffa62a6c),
         backgroundColor: Colors.white,
-        canvasColor: const Color(0xffa62a6c),
+        // canvasColor: const Color(0xffa62a6c),
         appBarTheme: const AppBarTheme(
           backgroundColor: Color(0xffa62a6c),
           centerTitle: true
